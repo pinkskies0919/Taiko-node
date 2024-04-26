@@ -22,7 +22,6 @@ function delete() {
   # 返回主菜单
   main_menu
 }
-}
 
 
 # 节点安装功能
