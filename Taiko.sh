@@ -10,6 +10,21 @@ fi
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Taiko.sh"
 
+
+function delete() {
+    cd simple-taiko-node
+    docker compose down -v
+    cd ..
+    rm -rf simple-taiko-node
+    
+    read -p "按回车键返回主菜单"
+
+  # 返回主菜单
+  main_menu
+}
+}
+
+
 # 节点安装功能
 function install_node() {
 
@@ -197,14 +212,16 @@ function check_service_status() {
 # 主菜单
 function main_menu() {
     clear
-    echo "请选择要执行的操作(输入1进行安装):"
-    echo "1. 安装节点"
-    echo "2. 查询节点日志"
-    read -p "请输入选项（1-2）: " OPTION
+    echo "请选择要执行的操作(输入2进行安装):"
+    echo "1. 卸载旧版本"
+    echo "2. 安装节点"
+    echo "3. 查询节点日志"
+    read -p "请输入选项（1-3）: " OPTION
 
     case $OPTION in
-    1) install_node ;;
-    2) check_service_status ;;
+    1) delete ;;
+    2) install_node ;;
+    3) check_service_status ;;
     *) echo "无效选项。" ;;
     esac
 }
