@@ -39,15 +39,21 @@ if [ ! -f .env ]; then
 fi
 
 # 提示用户输入环境变量的值
+echo "回车默认"
 read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
-read -p "是否成为提议者(输入True): " enable_proposer
-read -p "请确认是否关闭P2P同步（可选true或者false，前期同步节点建议输入false，方便前期同步，后期阶段重跑脚本后，选择true，可以加速节点同步）: " disable_p2p_sync
-read -p "请输入EVM钱包私钥: " l1_proposer_private_key
+read -p "请输入Beacon Holskey RPC链接 [默认: https://ethereum-holesky-beacon-api.publicnode.com]: " l1_beacon_http
+l1_beacon_http=${l1_beacon_http:-'https://ethereum-holesky-beacon-api.publicnode.com'}
+read -p "请确认是否作为提议者（默认true）: " enable_proposer
+enable_proposer=${enable_proposer:-'true'}
+read -p "请确认是否关闭P2P同步（默认false）: " disable_p2p_sync
+disable_p2p_sync=${disable_p2p_sync:-'false'}
+read -p "请输入EVM钱包私钥(去0x): " l1_proposer_private_key
+read -p "请输入EVM钱包地址: " l2_suggested_fee_recipient
 
-# 检测端口
+# 检测并罗列未被占用的端口
 function list_recommended_ports {
-    local start_port=8000 
+    local start_port=8000 # 可以根据需要调整起始搜索端口
     local needed_ports=7
     local count=0
     local ports=()
@@ -94,8 +100,10 @@ port_grafana=${port_grafana:-3001}
 # 将用户输入的值写入.env文件
 sed -i "s|L1_ENDPOINT_HTTP=.*|L1_ENDPOINT_HTTP=${l1_endpoint_http}|" .env
 sed -i "s|L1_ENDPOINT_WS=.*|L1_ENDPOINT_WS=${l1_endpoint_ws}|" .env
+sed -i "s|L1_BEACON_HTTP=.*|L1_BEACON_HTTP=${l1_beacon_http}|" .env
 sed -i "s|ENABLE_PROPOSER=.*|ENABLE_PROPOSER=${enable_proposer}|" .env
 sed -i "s|L1_PROPOSER_PRIVATE_KEY=.*|L1_PROPOSER_PRIVATE_KEY=${l1_proposer_private_key}|" .env
+sed -i "s|L2_SUGGESTED_FEE_RECIPIENT=.*|L2_SUGGESTED_FEE_RECIPIENT=${l2_suggested_fee_recipient}|" .env
 sed -i "s|DISABLE_P2P_SYNC=.*|DISABLE_P2P_SYNC=${disable_p2p_sync}|" .env
 
 # 更新.env文件中的端口配置
@@ -106,7 +114,7 @@ sed -i "s|PORT_L2_EXECUTION_ENGINE_P2P=.*|PORT_L2_EXECUTION_ENGINE_P2P=${port_l2
 sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
-sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://taiko-a6-prover.zkpool.io|" .env
+sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://hekla.stonemac65.xyz:9876|" .env
 sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
 
 # 用户信息已配置完毕
@@ -153,14 +161,20 @@ docker compose version
 
 # 验证 Docker Engine 安装是否成功
 sudo docker run hello-world
-
+# 应该能看到 hello-world 程序的输出
 
 # 运行 Taiko 节点
-docker compose up -d
+docker compose --profile l2_execution_engine down
+docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+docker compose --profile l2_execution_engine up -d
 
+
+# 运行 Taiko proposer 节点
+docker compose up taiko_client_proposer -d
 # 获取公网 IP 地址
 public_ip=$(curl -s ifconfig.me)
 
+# 准备原始链接
 original_url="LocalHost:${port_grafana}/d/L2ExecutionEngine/l2-execution-engine-overview?orgId=1&refresh=10s"
 
 # 替换 LocalHost 为公网 IP 地址
@@ -176,6 +190,7 @@ function check_service_status() {
     cd simple-taiko-node
     docker compose logs -f --tail 20
 }
+
 
 
 
