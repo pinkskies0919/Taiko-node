@@ -19,8 +19,8 @@ function delete() {
     
     read -p "按回车键返回主菜单"
 
-  # 返回主菜单
-  main_menu
+    # 返回主菜单
+    main_menu
 }
 
 
