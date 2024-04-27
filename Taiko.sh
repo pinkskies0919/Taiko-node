@@ -205,7 +205,7 @@ function check_service_status() {
     docker compose logs -f --tail 20
 }
 
-function change_prover() {
+function change prover_rpc() {
 cd $HOME/simple-taiko-node
 
 rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876")
@@ -240,7 +240,7 @@ function main_menu() {
     case $OPTION in
     1) delete ;;
     2) install_node ;;
-    3) change prover rpc ;;
+    3) change prover_rpc ;;
     4) check_service_status ;;
     *) echo "无效选项。" ;;
     esac
