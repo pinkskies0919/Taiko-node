@@ -228,6 +228,21 @@ docker compose --profile l2_execution_engine up -d
 docker compose up taiko_client_proposer -d
 }
 
+function check_service_status() {
+    cd #HOME
+    cd simple-taiko-node
+    docker compose logs -f --tail 20
+}
+
+function restart() {
+cd #HOME
+cd simple-taiko-node
+
+docker compose --profile l2_execution_engine down
+docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+docker compose --profile l2_execution_engine up -d
+docker compose up taiko_client_proposer -d
+}
 
 # 主菜单
 function main_menu() {
@@ -237,6 +252,7 @@ function main_menu() {
     echo "2. 安装节点"
     echo "3. 加载prover rpc"
     echo "4. 查询节点日志"
+    echo "5. 重启Taiko节点"
     read -p "请输入选项（1-4）: " OPTION
 
     case $OPTION in
@@ -244,6 +260,7 @@ function main_menu() {
     2) install_node ;;
     3) change_rpc ;;
     4) check_service_status ;;
+    5) restart ;;
     *) echo "无效选项。" ;;
     esac
 }
