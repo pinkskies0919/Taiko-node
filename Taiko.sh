@@ -205,7 +205,26 @@ function check_service_status() {
     docker compose logs -f --tail 20
 }
 
+function change_prover() {
+cd $HOME/simple-taiko-node
 
+rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876")
+rpc_string=""
+
+for rpc in "${rpc_list[@]}"
+do
+  rpc_string="$rpc_string$rpc,"
+done
+
+rpc_string="${rpc_string%,}"
+
+sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${rpc_string}|" .env
+echo "prover rpc设置成功，正在重启Taiko节点"
+docker compose --profile l2_execution_engine down
+docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+docker compose --profile l2_execution_engine up -d
+docker compose up taiko_client_proposer -d
+}
 
 
 # 主菜单
@@ -214,13 +233,15 @@ function main_menu() {
     echo "请选择要执行的操作(输入2进行安装):"
     echo "1. 卸载旧版本"
     echo "2. 安装节点"
-    echo "3. 查询节点日志"
+    echo "3. 加载prover rpc"
+    echo "4. 查询节点日志"
     read -p "请输入选项（1-3）: " OPTION
 
     case $OPTION in
     1) delete ;;
     2) install_node ;;
-    3) check_service_status ;;
+    3) change prover rpc ;;
+    4) check_service_status ;;
     *) echo "无效选项。" ;;
     esac
 }
