@@ -201,12 +201,14 @@ echo "请保存以下链接，5分钟后进行访问：$updated_url"
 
 # 查看节点日志
 function check_service_status() {
+    cd #HOME
     cd simple-taiko-node
     docker compose logs -f --tail 20
 }
 
 function change_rpc() {
-cd $HOME/simple-taiko-node
+cd #HOME
+cd simple-taiko-node
 
 rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876")
 rpc_string=""
