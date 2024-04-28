@@ -12,10 +12,18 @@ SCRIPT_PATH="$HOME/Taiko.sh"
 
 
 function delete() {
-    cd simple-taiko-node
+    echo "正在卸载，请稍等······"
+    simple_taiko_node_path=$(find / -xdev -name "simple-taiko-node" -type d 2>/dev/null)
+
+    if [ -z "$simple_taiko_node_path" ]; then
+        echo "该VPS未安装Taiko节点，无法删除"
+        return 1
+    fi
+
+    cd "$simple_taiko_node_path" || return 1
     docker compose down -v
     cd ..
-    rm -rf simple-taiko-node
+    rm -rf "$simple_taiko_node_path"
     
     read -p "按回车键返回主菜单"
 
@@ -176,7 +184,6 @@ docker compose version
 
 # 验证 Docker Engine 安装是否成功
 sudo docker run hello-world
-# 应该能看到 hello-world 程序的输出
 
 # 运行 Taiko 节点
 docker compose --profile l2_execution_engine down
@@ -245,15 +252,46 @@ docker compose --profile l2_execution_engine up -d
 docker compose up taiko_client_proposer -d
 }
 
+function change_blockpi() {
+cd #HOME
+cd simple-taiko-node
+
+read -p "请输入BlockPI holesky HTTP链接 " l1_endpoint_http
+read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
+
+sed -i "s|L1_ENDPOINT_HTTP=.*|L1_ENDPOINT_HTTP=${l1_endpoint_http}|" .env
+sed -i "s|L1_ENDPOINT_WS=.*|L1_ENDPOINT_WS=${l1_endpoint_ws}|" .env
+
+docker compose --profile l2_execution_engine down
+docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+docker compose --profile l2_execution_engine up -d
+docker compose up taiko_client_proposer -d
+
+echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
+}
+
+function find_path() {
+echo "Taiko节点在以下路径中，默认为/root/simple-taiko-node"
+find / -xdev -name "simple-taiko-node" -type d
+}
+
 # 主菜单
 function main_menu() {
     clear
-    echo "请选择要执行的操作(安装过旧版本需要先卸载旧版本，输入2进行安装):"
+    echo "=====================专用脚本 盗者必究==========================="
+    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
+    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
+    echo "从未安装过Taiko的vps请执行安装节点--更新prover rpc--查看节点日志"
+    echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--更新prover rpc--查看节点日志"
+    echo "请定期检查BlockPI rpc流量 不足时请执行更换BlockPI rpc"
+    echo "请选择要执行的操作:"
     echo "1. 卸载旧版本"
     echo "2. 安装节点"
-    echo "3. 加载prover rpc"
+    echo "3. 更新prover rpc"
     echo "4. 查询节点日志"
     echo "5. 重启Taiko节点"
+    echo "6. 更换BlockPI rpc"
+    echo "7. 查询Taiko节点是否安装"
     read -p "请输入选项（1-4）: " OPTION
 
     case $OPTION in
@@ -262,6 +300,8 @@ function main_menu() {
     3) change_rpc ;;
     4) check_service_status ;;
     5) restart ;;
+    6) change_blockpi ;;
+    7) find_path ;;
     *) echo "无效选项。" ;;
     esac
 }
