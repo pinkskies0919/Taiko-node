@@ -271,7 +271,7 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
 
 function find_path() {
-echo "Taiko节点在以下路径中，默认为/root/simple-taiko-node"
+echo "正在查询Taiko节点路径，请稍等······(默认应为/root/simple-taiko-node)"
 find / -xdev -name "simple-taiko-node" -type d
 }
 
@@ -283,7 +283,7 @@ function main_menu() {
     echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
     echo "从未安装过Taiko的vps请执行安装节点--更新prover rpc--查看节点日志"
     echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--更新prover rpc--查看节点日志"
-    echo "请定期检查BlockPI rpc流量 不足时请执行更换BlockPI rpc"
+    echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
     echo "请选择要执行的操作:"
     echo "1. 卸载旧版本"
     echo "2. 安装节点"
@@ -292,7 +292,7 @@ function main_menu() {
     echo "5. 重启Taiko节点"
     echo "6. 更换BlockPI rpc"
     echo "7. 查询Taiko节点是否安装"
-    read -p "请输入选项（1-4）: " OPTION
+    read -p "请输入选项（1-7）: " OPTION
 
     case $OPTION in
     1) delete ;;
