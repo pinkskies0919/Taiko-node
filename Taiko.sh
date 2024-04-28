@@ -42,10 +42,10 @@ else
 fi
 
 # 克隆 Taiko 仓库
+cd $HOME
 git clone https://github.com/taikoxyz/simple-taiko-node.git
 
 # 进入 Taiko 目录
-cd $HOME
 cd simple-taiko-node
 
 # 如果不存在.env文件，则从示例创建一个
