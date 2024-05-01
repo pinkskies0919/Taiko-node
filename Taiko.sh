@@ -263,6 +263,23 @@ docker compose up taiko_client_proposer -d
 echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
 
+function change_beaconrpc() {
+cd $HOME/simple-taiko-node
+
+read -p "请输入beacon rpc连接 (默认为https://burned-twilight-log.ethereum-holesky.quiknode.pro/): " rpc_url
+rpc_url=${rpc_url:-"https://burned-twilight-log.ethereum-holesky.quiknode.pro/"}
+
+echo "L1_BEACON_HTTP=$rpc_url" > .env
+
+docker compose --profile l2_execution_engine down
+docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+docker compose --profile l2_execution_engine up -d
+docker compose up taiko_client_proposer -d
+
+echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
+}
+
+
 function find_path() {
 echo "正在查询Taiko节点路径，请稍等······(默认应为/root/simple-taiko-node)"
 find / -xdev -name "simple-taiko-node" -type d
@@ -284,7 +301,8 @@ function main_menu() {
     echo "4. 查询节点日志"
     echo "5. 重启Taiko节点"
     echo "6. 更换BlockPI rpc"
-    echo "7. 查询Taiko节点是否安装"
+    echo "7. 更换Beacon rpc"
+    echo "8. 查询Taiko节点是否安装"
     read -p "请输入选项（1-7）: " OPTION
 
     case $OPTION in
@@ -294,7 +312,8 @@ function main_menu() {
     4) check_service_status ;;
     5) restart ;;
     6) change_blockpi ;;
-    7) find_path ;;
+    7) change_beaconrpc ;;
+    8) find_path ;;
     *) echo "无效选项。" ;;
     esac
 }
