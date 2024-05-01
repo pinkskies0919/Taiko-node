@@ -13,18 +13,11 @@ SCRIPT_PATH="$HOME/Taiko.sh"
 
 function delete() {
     echo "正在卸载，请稍等······"
-    simple_taiko_node_path=$(find / -xdev -name "simple-taiko-node" -type d 2>/dev/null)
-
-    if [ -z "$simple_taiko_node_path" ]; then
-        echo "该VPS未安装Taiko节点，无法删除"
-        return 1
-    fi
-
-    cd "$simple_taiko_node_path" || return 1
-    docker compose down -v
+    cd simple-taiko-node
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 
     cd ..
-    rm -rf "$simple_taiko_node_path"
-    
+    rm -rf simple-taiko-node
     read -p "按回车键返回主菜单"
 
     # 返回主菜单
