@@ -266,11 +266,10 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
-read -p "请输入beacon rpc连接 (默认为https://burned-twilight-log.ethereum-holesky.quiknode.pro/): " rpc_url
-rpc_url=${rpc_url:-"https://burned-twilight-log.ethereum-holesky.quiknode.pro/"}
+read -p "请输入Beacon Holskey RPC链接 [默认: https://burned-twilight-log.ethereum-holesky.quiknode.pro/]: " l1_beacon_http
+l1_beacon_http=${l1_beacon_http:-'https://burned-twilight-log.ethereum-holesky.quiknode.pro/'}
 
-echo "L1_BEACON_HTTP=$rpc_url" > .env
-
+sed -i "s|L1_BEACON_HTTP=.*|L1_BEACON_HTTP=${l1_beacon_http}|" .env
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
 docker compose --profile l2_execution_engine up -d
