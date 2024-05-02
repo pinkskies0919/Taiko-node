@@ -330,7 +330,7 @@ if [[ "$CURRENT_BOOT_NODES" =~ "enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0
 else
   # 在当前的BOOT_NODES参数后叠加指定的enode
   NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
-  sed -i "s/^BOOT_NODES=.*/BOOT_NODES=${NEW_BOOT_NODES}/" .env
+  sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
   echo "已成功添加指定的enode到BOOT_NODES参数中"
 fi
 
