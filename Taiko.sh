@@ -59,7 +59,7 @@ echo "回车默认"
 read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
 read -p "请输入Beacon Holskey RPC链接 [默认: https://burned-twilight-log.ethereum-holesky.quiknode.pro/]: " l1_beacon_http
-l1_beacon_http=${l1_beacon_http:-'https://burned-twilight-log.ethereum-holesky.quiknode.pro/'}
+l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
 read -p "请确认是否作为提议者（默认true）: " enable_proposer
 enable_proposer=${enable_proposer:-'true'}
 read -p "请确认是否关闭P2P同步（默认false）: " disable_p2p_sync
@@ -266,8 +266,8 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
-read -p "请输入Beacon Holskey RPC链接 [默认: https://burned-twilight-log.ethereum-holesky.quiknode.pro/]: " l1_beacon_http
-l1_beacon_http=${l1_beacon_http:-'https://burned-twilight-log.ethereum-holesky.quiknode.pro/'}
+read -p "请输入Beacon Holskey RPC链接 [默认: http://unstable.holesky.beacon-api.nimbus.team]: " l1_beacon_http
+l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
 
 sed -i "s|L1_BEACON_HTTP=.*|L1_BEACON_HTTP=${l1_beacon_http}|" .env
 docker compose --profile l2_execution_engine down
