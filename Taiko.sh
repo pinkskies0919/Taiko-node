@@ -319,21 +319,31 @@ find / -xdev -name "simple-taiko-node" -type d
 }
 
 function add_bootnode() {
-cd $HOME/simple-taiko-node
+  cd $HOME/simple-taiko-node
 
-# 读取当前的BOOT_NODES参数
-CURRENT_BOOT_NODES=$(grep -oP '^BOOT_NODES=\K.*' .env)
+  # 定义NEW_BOOT_NODES变量并初始化为空字符串
+  NEW_BOOT_NODES="enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303"
 
-# 判断是否含有指定的enode
-if [[ "$CURRENT_BOOT_NODES" =~ "enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303" ]]; then
-  echo "BOOT_NODES参数中已包含指定的enode"
-else
-  # 在当前的BOOT_NODES参数后叠加指定的enode
-  NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
-  sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
-  echo "已成功添加指定的enode到BOOT_NODES参数中"
-fi
+  # 读取当前的BOOT_NODES参数
+  CURRENT_BOOT_NODES=$(grep -oP '^BOOT_NODES=\K.*' .env)
 
+  # 判断是否含有指定的enode
+  if [[ "$CURRENT_BOOT_NODES" =~ "$NEW_BOOT_NODES" ]]; then
+    echo "BOOT_NODES参数中已包含指定的enode"
+  else
+    # 在当前的BOOT_NODES参数后叠加指定的enode
+    NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
+    sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
+    echo "已成功添加指定的enode到BOOT_NODES参数中"
+    
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+    docker compose --profile l2_execution_engine up -d
+    docker compose up taiko_client_proposer -d
+
+    echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
+    
+  fi
 }
 
 # 主菜单
