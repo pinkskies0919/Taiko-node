@@ -270,6 +270,7 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
+echo "当前的Beacon Holskey RPC链接: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
 read -p "请输入Beacon Holskey RPC链接 [默认: http://unstable.holesky.beacon-api.nimbus.team]: " l1_beacon_http
 l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
 
