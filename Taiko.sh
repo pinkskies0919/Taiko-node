@@ -270,9 +270,37 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
-echo "当前的Beacon Holskey RPC链接: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
-read -p "请输入Beacon Holskey RPC链接 [默认: http://unstable.holesky.beacon-api.nimbus.team]: " l1_beacon_http
-l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
+while true; do
+    echo "当前的Beacon Holskey RPC链接: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
+    echo "请选择操作:"
+    echo "1. 设置Beacon Holskey RPC链接为 http://unstable.holesky.beacon-api.nimbus.team"
+    echo "2. 设置Beacon Holskey RPC链接为 http://195.201.170.121:5052"
+    echo "3. 设置Beacon Holskey RPC链接为 http://188.40.51.249:5052"
+    echo "4. 设置自定义Beacon Holskey RPC链接"
+    read -p "请输入选项: " choice
+
+    case $choice in
+        1)
+            l1_beacon_http='http://unstable.holesky.beacon-api.nimbus.team'
+            break
+            ;;
+        2)
+            l1_beacon_http='http://195.201.170.121:5052'
+            break
+            ;;
+        3)
+            l1_beacon_http='http://188.40.51.249:5052'
+            break
+            ;;
+        4)
+            read -p "请输入自定义Beacon Holskey RPC链接: " l1_beacon_http
+            break
+            ;;
+        *)
+            echo "无效的选项，请重新输入"
+            ;;
+    esac
+done
 
 sed -i "s|L1_BEACON_HTTP=.*|L1_BEACON_HTTP=${l1_beacon_http}|" .env
 docker compose --profile l2_execution_engine down
@@ -282,6 +310,7 @@ docker compose up taiko_client_proposer -d
 
 echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
+
 
 
 function find_path() {
