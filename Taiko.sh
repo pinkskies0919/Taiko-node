@@ -289,6 +289,24 @@ echo "正在查询Taiko节点路径，请稍等······(默认应为/root/si
 find / -xdev -name "simple-taiko-node" -type d
 }
 
+function add_bootnode() {
+cd $HOME/simple-taiko-node
+
+# 读取当前的BOOT_NODES参数
+CURRENT_BOOT_NODES=$(grep -oP '^BOOT_NODES=\K.*' .env)
+
+# 判断是否含有指定的enode
+if [[ "$CURRENT_BOOT_NODES" =~ "enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303" ]]; then
+  echo "BOOT_NODES参数中已包含指定的enode"
+else
+  # 在当前的BOOT_NODES参数后叠加指定的enode
+  NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
+  sed -i "s/^BOOT_NODES=.*/BOOT_NODES=${NEW_BOOT_NODES}/" .env
+  echo "已成功添加指定的enode到BOOT_NODES参数中"
+fi
+
+}
+
 # 主菜单
 function main_menu() {
     clear
@@ -307,7 +325,8 @@ function main_menu() {
     echo "6. 更换BlockPI rpc"
     echo "7. 更换Beacon rpc"
     echo "8. 查询Taiko节点是否安装"
-    read -p "请输入选项（1-7）: " OPTION
+    echo "9. 加速区块同步节点"
+    read -p "请输入选项（1-9）: " OPTION
 
     case $OPTION in
     1) delete ;;
@@ -318,6 +337,7 @@ function main_menu() {
     6) change_blockpi ;;
     7) change_beaconrpc ;;
     8) find_path ;;
+    9) add_bootnode ;;
     *) echo "无效选项。" ;;
     esac
 }
