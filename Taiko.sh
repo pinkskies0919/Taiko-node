@@ -249,8 +249,12 @@ function change_blockpi() {
 cd #HOME
 cd simple-taiko-node
 
-read -p "请输入BlockPI holesky HTTP链接 " l1_endpoint_http
-read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
+# 显示当前的 BlockPI holesky HTTP 链接和 BlockPI holesky WS 链接
+echo "当前的BlockPI holesky HTTP链接: $(grep L1_ENDPOINT_HTTP .env | cut -d '=' -f2)"
+echo "当前的BlockPI holesky WS链接: $(grep L1_ENDPOINT_WS .env | cut -d '=' -f2)"
+
+read -p "请输入更换的BlockPI holesky HTTP链接 " l1_endpoint_http
+read -p "请输入更换的BlockPI holesky WS链接: " l1_endpoint_ws
 
 sed -i "s|L1_ENDPOINT_HTTP=.*|L1_ENDPOINT_HTTP=${l1_endpoint_http}|" .env
 sed -i "s|L1_ENDPOINT_WS=.*|L1_ENDPOINT_WS=${l1_endpoint_ws}|" .env
