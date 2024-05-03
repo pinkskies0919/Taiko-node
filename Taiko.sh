@@ -223,37 +223,35 @@ function check_service_status() {
 }
 
 function change_rpc() {
-cd $HOME
-cd simple-taiko-node
+  cd $HOME
+  cd simple-taiko-node
 
-rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876" "http://taiko-a7-prover.zkpool.io")
-rpc_string=""
+  rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876" "http://taiko-a7-prover.zkpool.io")
+  rpc_string=""
 
-existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
-rpc_already_exist=0
+  existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
+  rpc_already_exist=0
 
-for rpc in "${rpc_list[@]}"
-do
-  if [[ $existing_rpc == *"$rpc"* ]]; then
-    rpc_already_exist=1
-    break
+  for rpc in "${rpc_list[@]}"
+  do
+    if [[ "$existing_rpc" != *"$rpc"* ]]; then
+      rpc_string="$rpc_string$rpc,"
+    fi
+  done
+
+  if [ -z "$rpc_string" ]; then
+    echo "已经更新过prover rpc"
   else
-    rpc_string="$rpc_string$rpc,"
+    rpc_string="${rpc_string%,}"
+    sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${existing_rpc},${rpc_string}|" .env
+
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+    docker compose --profile l2_execution_engine up -d
+    docker compose up taiko_client_proposer -d
   fi
-done
-
-if [ $rpc_already_exist -eq 1 ]; then
-  echo "已经更新过prover rpc"
-else
-  rpc_string="${rpc_string%,}"
-  sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${existing_rpc},${rpc_string}|" .env
-
-  docker compose --profile l2_execution_engine down
-  docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-  docker compose --profile l2_execution_engine up -d
-  docker compose up taiko_client_proposer -d
-fi
 }
+
 
 
 function check_service_status() {
