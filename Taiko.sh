@@ -130,7 +130,7 @@ sed -i "s|PORT_L2_EXECUTION_ENGINE_P2P=.*|PORT_L2_EXECUTION_ENGINE_P2P=${port_l2
 sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
-sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://198.244.201.79:9876,http://taiko.web3crypt.net:9876,http://hekla.stonemac65.xyz:9876,http://kenz-prover.hekla.kzvn.xyz:9876|' .env
+sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://198.244.201.79:9876,http://taiko.web3crypt.net:9876,http://hekla.stonemac65.xyz:9876,http://kenz-prover.hekla.kzvn.xyz:9876,http://taiko-a7-prover.zkpool.io|' .env
 sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
 
 # 定义NEW_BOOT_NODES变量并初始化为空字符串
@@ -226,7 +226,7 @@ function change_rpc() {
 cd $HOME
 cd simple-taiko-node
 
-rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876")
+rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876" "http://taiko-a7-prover.zkpool.io")
 rpc_string=""
 
 existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
