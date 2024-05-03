@@ -147,7 +147,7 @@ sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
     NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
     sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
     echo "已成功添加指定的enode到BOOT_NODES参数中"
-
+  fi
 # 用户信息已配置完毕
 echo "用户信息已配置完毕。"
 
