@@ -130,8 +130,23 @@ sed -i "s|PORT_L2_EXECUTION_ENGINE_P2P=.*|PORT_L2_EXECUTION_ENGINE_P2P=${port_l2
 sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
-sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://hekla.stonemac65.xyz:9876|" .env
+sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://198.244.201.79:9876,http://taiko.web3crypt.net:9876,http://hekla.stonemac65.xyz:9876,http://kenz-prover.hekla.kzvn.xyz:9876|' .env
 sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
+
+# 定义NEW_BOOT_NODES变量并初始化为空字符串
+    NEW_BOOT_NODES="enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303"
+
+# 读取当前的BOOT_NODES参数
+    CURRENT_BOOT_NODES=$(grep -oP '^BOOT_NODES=\K.*' .env)
+
+# 判断是否含有指定的enode
+  if [[ "$CURRENT_BOOT_NODES" =~ "$NEW_BOOT_NODES" ]]; then
+    echo "BOOT_NODES参数中已包含指定的enode"
+  else
+    # 在当前的BOOT_NODES参数后叠加指定的enode
+    NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
+    sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
+    echo "已成功添加指定的enode到BOOT_NODES参数中"
 
 # 用户信息已配置完毕
 echo "用户信息已配置完毕。"
@@ -208,26 +223,38 @@ function check_service_status() {
 }
 
 function change_rpc() {
-cd #HOME
+cd $HOME
 cd simple-taiko-node
 
 rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876")
 rpc_string=""
 
+existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
+rpc_already_exist=0
+
 for rpc in "${rpc_list[@]}"
 do
-  rpc_string="$rpc_string$rpc,"
+  if [[ $existing_rpc == *"$rpc"* ]]; then
+    rpc_already_exist=1
+    break
+  else
+    rpc_string="$rpc_string$rpc,"
+  fi
 done
 
-rpc_string="${rpc_string%,}"
+if [ $rpc_already_exist -eq 1 ]; then
+  echo "已经更新过prover rpc"
+else
+  rpc_string="${rpc_string%,}"
+  sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${existing_rpc},${rpc_string}|" .env
 
-sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${rpc_string}|" .env
-
-docker compose --profile l2_execution_engine down
-docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
-docker compose up taiko_client_proposer -d
+  docker compose --profile l2_execution_engine down
+  docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+  docker compose --profile l2_execution_engine up -d
+  docker compose up taiko_client_proposer -d
+fi
 }
+
 
 function check_service_status() {
     cd #HOME
@@ -271,7 +298,7 @@ function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
 while true; do
-    echo "当前的Beacon Holskey RPC链接: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
+    echo "当前的Beacon Holskey RPC链接为: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
     echo "请选择操作:"
     echo "1. 设置Beacon Holskey RPC链接为 http://unstable.holesky.beacon-api.nimbus.team"
     echo "2. 设置Beacon Holskey RPC链接为 http://195.201.170.121:5052"
