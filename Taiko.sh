@@ -58,7 +58,7 @@ fi
 echo "回车默认"
 read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
-read -p "请输入Beacon Holskey RPC链接 [默认: https://burned-twilight-log.ethereum-holesky.quiknode.pro/]: " l1_beacon_http
+read -p "请输入Beacon Holskey RPC链接 [默认: http://unstable.holesky.beacon-api.nimbus.team]: " l1_beacon_http
 l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
 read -p "请确认是否作为提议者（默认true）: " enable_proposer
 enable_proposer=${enable_proposer:-'true'}
