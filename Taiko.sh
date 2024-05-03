@@ -244,7 +244,7 @@ function change_rpc() {
   else
     rpc_string="${rpc_string%,}"
     sed -i "s|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=${existing_rpc},${rpc_string}|" .env
-
+    echo "成功更新prover rpc"
     docker compose --profile l2_execution_engine down
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
     docker compose --profile l2_execution_engine up -d
