@@ -28,8 +28,10 @@ function delete() {
     main_menu
 }
 
+# 记录配置信息功能
 function record() {
-
+    # 设置.env文件路径
+    env_file="/root/simple-taiko-node/.env"
     # 从.env文件中提取参数值并记录到record.txt文件中
     record_file="/root/record.txt"
     {
@@ -51,6 +53,7 @@ function record() {
     # 返回主菜单
     main_menu
 }
+
 
 
 # 节点安装功能
