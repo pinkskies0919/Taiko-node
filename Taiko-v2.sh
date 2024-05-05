@@ -35,10 +35,10 @@ function record() {
     # 从.env文件中提取参数值并记录到record.txt文件中
     record_file="/root/record.txt"
     {
-        grep "L1_ENDPOINT_HTTP=" "$env_file" | cut -d '=' -f 2
-        grep "L1_ENDPOINT_WS=" "$env_file" | cut -d '=' -f 2
-        grep "L1_PROPOSER_PRIVATE_KEY=" "$env_file" | cut -d '=' -f 2
-        grep "L2_SUGGESTED_FEE_RECIPIENT=" "$env_file" | cut -d '=' -f 2
+        echo "L1_ENDPOINT_HTTP=$(grep "L1_ENDPOINT_HTTP=" "$env_file" | cut -d '=' -f 2)"
+        echo "L1_ENDPOINT_WS=$(grep "L1_ENDPOINT_WS=" "$env_file" | cut -d '=' -f 2)"
+        echo "L1_PROPOSER_PRIVATE_KEY=$(grep "L1_PROPOSER_PRIVATE_KEY=" "$env_file" | cut -d '=' -f 2)"
+        echo "L2_SUGGESTED_FEE_RECIPIENT=$(grep "L2_SUGGESTED_FEE_RECIPIENT=" "$env_file" | cut -d '=' -f 2)"
     } > "$record_file"
 
     # 检查记录是否成功
@@ -53,6 +53,7 @@ function record() {
     # 返回主菜单
     main_menu
 }
+
 
 
 
