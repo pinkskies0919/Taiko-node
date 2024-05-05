@@ -86,15 +86,16 @@ if [ ! -f .env ]; then
   cp .env.sample .env
 fi
 
-# 从/root/record.txt文件中读取值
+# 从/root/record.txt文件中读取参数值
 record_file="/root/record.txt"
-l1_endpoint_http=$(sed -n '1p' $record_file)
-l1_endpoint_ws=$(sed -n '2p' $record_file)
+l1_endpoint_http=$(grep "L1_ENDPOINT_HTTP=" "$record_file" | cut -d '=' -f 2)
+l1_endpoint_ws=$(grep "L1_ENDPOINT_WS=" "$record_file" | cut -d '=' -f 2)
+l1_proposer_private_key=$(grep "L1_PROPOSER_PRIVATE_KEY=" "$record_file" | cut -d '=' -f 2)
+l2_suggested_fee_recipient=$(grep "L2_SUGGESTED_FEE_RECIPIENT=" "$record_file" | cut -d '=' -f 2)
 l1_beacon_http="http://unstable.holesky.beacon-api.nimbus.team"
 enable_proposer="true"
 disable_p2p_sync="false"
-l1_proposer_private_key=$(sed -n '3p' $record_file)
-l2_suggested_fee_recipient=$(sed -n '4p' $record_file)
+
 
 # 设置默认端口值
 port_l2_execution_engine_http=8547
