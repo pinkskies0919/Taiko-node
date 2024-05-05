@@ -226,7 +226,8 @@ function change_rpc() {
   cd $HOME
   cd simple-taiko-node
 
-  rpc_list=("http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876/" "http://198.244.201.79:9876" "http://taiko-a7-prover.zkpool.io")
+  rpc_list=("http://198.244.201.79:9876" "http://kenz-prover.hekla.kzvn.xyz:9876" "http://hekla.stonemac65.xyz:9876" "http://taiko.web3crypt.net:9876" "http://148.113.17.127:9876" "http://146.59.55.26:9876" "http://hekla.prover.taiko.coinblitz.pro:9876" "https://prover-hekla.taiko.tools" "https://prover2-hekla.taiko.tools" "http://taiko-testnet.m51nodes.xyz:9876" "http://148.113.16.26:9876")
+
   rpc_string=""
 
   existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
