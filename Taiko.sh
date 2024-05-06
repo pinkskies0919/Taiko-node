@@ -58,60 +58,20 @@ fi
 echo "回车默认"
 read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
-read -p "请输入Beacon Holskey RPC链接 [默认: http://unstable.holesky.beacon-api.nimbus.team]: " l1_beacon_http
-l1_beacon_http=${l1_beacon_http:-'http://unstable.holesky.beacon-api.nimbus.team'}
-read -p "请确认是否作为提议者（默认true）: " enable_proposer
-enable_proposer=${enable_proposer:-'true'}
-read -p "请确认是否关闭P2P同步（默认false）: " disable_p2p_sync
-disable_p2p_sync=${disable_p2p_sync:-'false'}
 read -p "请输入EVM钱包私钥(去0x): " l1_proposer_private_key
 read -p "请输入EVM钱包地址: " l2_suggested_fee_recipient
+l1_beacon_http="http://unstable.holesky.beacon-api.nimbus.team"
+enable_proposer="true"
+disable_p2p_sync="false"
 
-# 检测并罗列未被占用的端口
-function list_recommended_ports {
-    local start_port=8000 # 可以根据需要调整起始搜索端口
-    local needed_ports=7
-    local count=0
-    local ports=()
-
-    while [ "$count" -lt "$needed_ports" ]; do
-        if ! ss -tuln | grep -q ":$start_port " ; then
-            ports+=($start_port)
-            ((count++))
-        fi
-        ((start_port++))
-    done
-
-    echo "推荐的端口如下："
-    for port in "${ports[@]}"; do
-        echo -e "\033[0;32m$port\033[0m"
-    done
-}
-
-# 使用推荐端口函数为端口配置
-list_recommended_ports
-
-# 提示用户输入端口配置，允许使用默认值
-read -p "请输入L2执行引擎HTTP端口 [默认: 8547]: " port_l2_execution_engine_http
-port_l2_execution_engine_http=${port_l2_execution_engine_http:-8547}
-
-read -p "请输入L2执行引擎WS端口 [默认: 8548]: " port_l2_execution_engine_ws
-port_l2_execution_engine_ws=${port_l2_execution_engine_ws:-8548}
-
-read -p "请输入L2执行引擎Metrics端口 [默认: 6061]: " port_l2_execution_engine_metrics
-port_l2_execution_engine_metrics=${port_l2_execution_engine_metrics:-6061}
-
-read -p "请输入L2执行引擎P2P端口 [默认: 30306]: " port_l2_execution_engine_p2p
-port_l2_execution_engine_p2p=${port_l2_execution_engine_p2p:-30306}
-
-read -p "请输入证明者服务器端口 [默认: 9876]: " port_prover_server
-port_prover_server=${port_prover_server:-9876}
-
-read -p "请输入Prometheus端口 [默认: 9092]: " port_prometheus
-port_prometheus=${port_prometheus:-9092}
-
-read -p "请输入Grafana端口 [默认: 3001]: " port_grafana
-port_grafana=${port_grafana:-3001}
+# 设置默认端口值
+port_l2_execution_engine_http=8547
+port_l2_execution_engine_ws=8548
+port_l2_execution_engine_metrics=6061
+port_l2_execution_engine_p2p=30306
+port_prover_server=9876
+port_prometheus=9092
+port_grafana=3001
 
 # 将用户输入的值写入.env文件
 sed -i "s|L1_ENDPOINT_HTTP=.*|L1_ENDPOINT_HTTP=${l1_endpoint_http}|" .env
@@ -378,8 +338,8 @@ function main_menu() {
     echo "=====================专用脚本 盗者必究==========================="
     echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
     echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
-    echo "从未安装过Taiko的vps请执行安装节点--更新prover rpc--查看节点日志"
-    echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--更新prover rpc--查看节点日志"
+    echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
+    echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
     echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
     echo "请选择要执行的操作:"
     echo "1. 卸载旧版本"
