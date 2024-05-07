@@ -10,6 +10,58 @@ fi
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Taiko.sh"
 
+# 查询信息
+function query_info() {
+    while true; do
+        clear
+        echo "请选择要执行的操作:"
+        echo "1. 查询节点日志"
+        echo "2. 查询Taiko节点是否安装"
+        echo "3. 查询钱包地址"
+        echo "4. 返回主菜单"
+        read -p "请输入选项（1-4）: " OPTION
+
+        case $OPTION in
+            1) check_service_status ;;
+            2) find_path ;;
+            3) main_menu ;;
+            4) query_wallet_address ;;
+            *) echo "无效选项。" ;;
+        esac
+    done
+}
+
+# 查询钱包地址
+function query_wallet_address() {
+    cd $HOME/simple-taiko-node
+    wallet_address=$(grep -oP '^L2_SUGGESTED_FEE_RECIPIENT=\K.*' .env)
+    echo "钱包地址为: $wallet_address"
+    read -p "按回车键返回主菜单"
+    main_menu
+}
+
+# 定义更换参数信息函数
+function change_parameters_info() {
+    while true; do
+        clear
+        echo "请选择要执行的操作:"
+        echo "1. 更新prover rpc"
+        echo "2. 更换BlockPI rpc"
+        echo "3. 更换Beacon rpc"
+        echo "4. 加速区块同步节点"
+        echo "5. 返回主菜单"
+        read -p "请输入选项（1-5）: " OPTION
+
+        case $OPTION in
+            1) change_rpc ;;
+            2) change_blockpi ;;
+            3) change_beaconrpc ;;
+            4) add_bootnode ;;
+            5) main_menu ;;
+            *) echo "无效选项。" ;;
+        esac
+    done
+}
 
 function delete() {
     echo "正在卸载，请稍等······"
@@ -335,37 +387,31 @@ function add_bootnode() {
 # 主菜单
 function main_menu() {
     clear
-    echo "=====================专用脚本 盗者必究==========================="
-    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
-    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
-    echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
-    echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
-    echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
-    echo "请选择要执行的操作:"
-    echo "1. 卸载旧版本"
-    echo "2. 安装节点"
-    echo "3. 更新prover rpc"
-    echo "4. 查询节点日志"
-    echo "5. 重启Taiko节点"
-    echo "6. 更换BlockPI rpc"
-    echo "7. 更换Beacon rpc"
-    echo "8. 查询Taiko节点是否安装"
-    echo "9. 加速区块同步节点"
-    read -p "请输入选项（1-9）: " OPTION
+        echo "=====================专用脚本 盗者必究==========================="
+        echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
+        echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
+        echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
+        echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
+        echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
+        echo "请选择要执行的操作:"
+        echo "1. 卸载旧版本"
+        echo "2. 安装节点"
+        echo "3. 更新参数信息"
+        echo "4. 查询信息"
+        echo "5. 重启Taiko节点"
+        read -p "请输入选项（1-5）: " OPTION
 
-    case $OPTION in
-    1) delete ;;
-    2) install_node ;;
-    3) change_rpc ;;
-    4) check_service_status ;;
-    5) restart ;;
-    6) change_blockpi ;;
-    7) change_beaconrpc ;;
-    8) find_path ;;
-    9) add_bootnode ;;
-    *) echo "无效选项。" ;;
-    esac
+        case $OPTION in
+            1) delete ;;
+            2) install_node ;;
+            3) change_parameters_info ;;
+            4) query_info ;;
+            5) restart ;;
+            *) echo "无效选项。" ;;
+        esac
+    done
 }
+
 
 # 显示主菜单
 main_menu
