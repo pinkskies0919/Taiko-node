@@ -373,7 +373,9 @@ cd $HOME/simple-taiko-node
     echo "1. 设置Beacon Holskey RPC链接为 http://unstable.holesky.beacon-api.nimbus.team"
     echo "2. 设置Beacon Holskey RPC链接为 http://195.201.170.121:5052"
     echo "3. 设置Beacon Holskey RPC链接为 http://188.40.51.249:5052"
-    echo "4. 设置自定义Beacon Holskey RPC链接"
+    echo "4. 设置Beacon Holskey RPC链接为 http://95.217.74.216:5052"
+    echo "5. 设置Beacon Holskey RPC链接为 http://138.201.221.84:5052"
+    echo "6. 设置自定义Beacon Holskey RPC链接"
     read -p "请输入选项: " choice
 
     case $choice in
@@ -390,6 +392,14 @@ cd $HOME/simple-taiko-node
             break
             ;;
         4)
+            l1_beacon_http='http://95.217.74.216:5052'
+            break
+            ;;
+        5)
+            l1_beacon_http='http://138.201.221.84:5052'
+            break
+            ;;
+        6)
             read -p "请输入自定义Beacon Holskey RPC链接: " l1_beacon_http
             break
             ;;
@@ -406,6 +416,7 @@ docker compose up taiko_client_proposer -d
 
 echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
+
 
 
 
