@@ -12,7 +12,6 @@ SCRIPT_PATH="$HOME/Taiko.sh"
 
 # 查询信息
 function query_info() {
-    while true; do
         clear
         echo "请选择要执行的操作:"
         echo "1. 查询节点日志"
@@ -76,7 +75,6 @@ function query_wallet_address() {
 
 # 定义更换参数信息函数
 function change_parameters_info() {
-    while true; do
         clear
         echo "请选择要执行的操作:"
         echo "1. 更新prover rpc"
@@ -100,21 +98,20 @@ function change_parameters_info() {
 
 
 function delete() {
-    while true; do
         clear
         echo "请选择要执行的操作:"
         echo "1. 常规卸载"
         echo "2. 彻底卸载(清除所有容器，多节点慎用)"
-        read -p "请输入选项（1-2）: " OPTION
+        echo "3. 返回主菜单"
+        read -p "请输入选项（1-3）: " OPTION
 
         case $OPTION in
             1) uninstall_regular ;;
             2) uninstall_full ;;
-            *) echo "无效选项。"; break ;;
+            3) main_menu ;;
+            *) echo "无效选项。" ;;
         esac
-    done
 }
-
 
 
 # 常规卸载功能
@@ -125,9 +122,7 @@ function uninstall_regular() {
     docker stop simple-taiko-node-taiko_client_proposer-1 
     cd ..
     rm -rf simple-taiko-node
-    read -p "按回车键返回主菜单"
-    # 返回主菜单
-    main_menu
+    read -p "按回车键返回"
 }
 # 彻底卸载功能
 function uninstall_full() {
@@ -142,8 +137,6 @@ function uninstall_full() {
     cd ..
     rm -rf simple-taiko-node
     read -p "按回车键返回主菜单"
-    # 返回主菜单
-    main_menu
 }
 
 # 节点安装功能
