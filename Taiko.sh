@@ -34,11 +34,16 @@ function query_info() {
 # 查询钱包地址
 function query_wallet_address() {
     cd $HOME/simple-taiko-node
-    wallet_address=$(grep -oP '^L2_SUGGESTED_FEE_RECIPIENT=\K.*' .env)
-    echo "钱包地址为: $wallet_address"
-    read -p "按回车键返回主菜单"
+    wallet_address=$(grep '^L2_SUGGESTED_FEE_RECIPIENT' .env | cut -d '=' -f2)
+    if [ -n "$wallet_address" ]; then
+        echo "钱包地址为: $wallet_address"
+    else
+        echo "无法找到钱包地址。"
+    fi
+    read -p "按回车键返回主菜单" 
     main_menu
 }
+
 
 # 定义更换参数信息函数
 function change_parameters_info() {
@@ -62,6 +67,8 @@ function change_parameters_info() {
         esac
     done
 }
+
+
 
 function delete() {
     echo "正在卸载，请稍等······"
@@ -386,30 +393,30 @@ function add_bootnode() {
 
 # 主菜单
 function main_menu() {
+    
     clear
-        echo "=====================专用脚本 盗者必究==========================="
-        echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
-        echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
-        echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
-        echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
-        echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
-        echo "请选择要执行的操作:"
-        echo "1. 卸载旧版本"
-        echo "2. 安装节点"
-        echo "3. 更新参数信息"
-        echo "4. 查询信息"
-        echo "5. 重启Taiko节点"
-        read -p "请输入选项（1-5）: " OPTION
+    echo "=====================专用脚本 盗者必究==========================="
+    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
+    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
+    echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
+    echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
+    echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
+    echo "请选择要执行的操作:"
+    echo "1. 卸载旧版本"
+    echo "2. 安装节点"
+    echo "3. 更新参数信息"
+    echo "4. 查询信息"
+    echo "5. 重启Taiko节点"
+    read -p "请输入选项（1-5）: " OPTION
 
-        case $OPTION in
-            1) delete ;;
-            2) install_node ;;
-            3) change_parameters_info ;;
-            4) query_info ;;
-            5) restart ;;
-            *) echo "无效选项。" ;;
-        esac
-    done
+    case $OPTION in
+        1) delete ;;
+        2) install_node ;;
+        3) change_parameters_info ;;
+        4) query_info ;;
+        5) restart ;;
+        *) echo "无效选项。" ;;
+    esac
 }
 
 
