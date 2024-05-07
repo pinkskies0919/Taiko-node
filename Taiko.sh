@@ -18,18 +18,47 @@ function query_info() {
         echo "1. 查询节点日志"
         echo "2. 查询Taiko节点是否安装"
         echo "3. 查询钱包地址"
-        echo "4. 返回主菜单"
-        read -p "请输入选项（1-4）: " OPTION
+        echo "4. 记录配置信息"
+        echo "5. 返回主菜单"
+        read -p "请输入选项（1-5）: " OPTION
 
         case $OPTION in
             1) check_service_status ;;
             2) find_path ;;
-            3) main_menu ;;
-            4) query_wallet_address ;;
+            3) query_wallet_address ;;
+            4) record ;;
+            5) main_menu ;;
             *) echo "无效选项。" ;;
         esac
     done
 }
+
+# 记录配置信息功能
+function record() {
+    # 设置.env文件路径
+    env_file="/root/simple-taiko-node/.env"
+    # 从.env文件中提取参数值并记录到record.txt文件中
+    record_file="/root/record.txt"
+    {
+        echo "L1_ENDPOINT_HTTP=$(grep "L1_ENDPOINT_HTTP=" "$env_file" | cut -d '=' -f 2)"
+        echo "L1_ENDPOINT_WS=$(grep "L1_ENDPOINT_WS=" "$env_file" | cut -d '=' -f 2)"
+        echo "L1_PROPOSER_PRIVATE_KEY=$(grep "L1_PROPOSER_PRIVATE_KEY=" "$env_file" | cut -d '=' -f 2)"
+        echo "L2_SUGGESTED_FEE_RECIPIENT=$(grep "L2_SUGGESTED_FEE_RECIPIENT=" "$env_file" | cut -d '=' -f 2)"
+    } > "$record_file"
+
+    # 检查记录是否成功
+    if [ -s "$record_file" ]; then
+        echo "成功记录到$record_file"
+    else
+        echo "记录失败"
+    fi
+
+    read -p "按回车键返回主菜单"
+
+    # 返回主菜单
+    main_menu
+}
+
 
 # 查询钱包地址
 function query_wallet_address() {
@@ -71,6 +100,24 @@ function change_parameters_info() {
 
 
 function delete() {
+    while true; do
+        clear
+        echo "请选择要执行的操作:"
+        echo "1. 常规卸载"
+        echo "2. 彻底卸载(清除所有容器，多节点慎用)"
+        read -p "请输入选项（1-2）: " OPTION
+
+        case $OPTION in
+            1) uninstall_regular ;;
+            2) uninstall_full ;;
+            *) echo "无效选项。" ;;
+        esac
+    done
+}
+
+
+# 常规卸载功能
+function uninstall_regular() {
     echo "正在卸载，请稍等······"
     cd simple-taiko-node
     docker compose --profile l2_execution_engine down
@@ -78,11 +125,25 @@ function delete() {
     cd ..
     rm -rf simple-taiko-node
     read -p "按回车键返回主菜单"
-
     # 返回主菜单
     main_menu
 }
-
+# 彻底卸载功能
+function uninstall_full() {
+    echo "正在彻底卸载，请稍等······"
+    cd simple-taiko-node
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+    docker rmi $(docker images -q)
+    docker network prune
+    docker volume prune
+    docker system prune -a
+    cd ..
+    rm -rf simple-taiko-node
+    read -p "按回车键返回主菜单"
+    # 返回主菜单
+    main_menu
+}
 
 # 节点安装功能
 function install_node() {
@@ -402,7 +463,7 @@ function main_menu() {
     echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
     echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
     echo "请选择要执行的操作:"
-    echo "1. 卸载旧版本"
+    echo "1. 卸载节点"
     echo "2. 安装节点"
     echo "3. 更新参数信息"
     echo "4. 查询信息"
