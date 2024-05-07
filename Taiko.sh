@@ -110,10 +110,11 @@ function delete() {
         case $OPTION in
             1) uninstall_regular ;;
             2) uninstall_full ;;
-            *) echo "无效选项。" ;;
+            *) echo "无效选项。"; break ;;
         esac
     done
 }
+
 
 
 # 常规卸载功能
