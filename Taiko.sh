@@ -80,15 +80,17 @@ function change_parameters_info() {
         echo "2. 更换BlockPI rpc"
         echo "3. 更换Beacon rpc"
         echo "4. 加速区块同步节点"
-        echo "5. 返回主菜单"
-        read -p "请输入选项（1-5）: " OPTION
+        echo "5. 设置gasfee"
+        echo "6. 返回主菜单"
+        read -p "请输入选项（1-6）: " OPTION
 
         case $OPTION in
             1) change_rpc ;;
             2) change_blockpi ;;
             3) change_beaconrpc ;;
             4) add_bootnode ;;
-            5) main_menu ;;
+            5) set_fee ;;
+            6) main_menu ;;
             *) echo "无效选项。" ;;
         esac
 }
@@ -454,6 +456,41 @@ function add_bootnode() {
     
   fi
 }
+
+function set_fee(){
+    echo "请选择需要支付的BLOCK_PROPOSAL_FEE："
+    echo "1. 1"
+    echo "2. 30(默认)"
+    echo "3. 80"
+    echo "4. 300"
+    read -p "请输入选项编号：" option
+
+    case $option in
+        1)
+            BLOCK_PROPOSAL_FEE=1
+            ;;
+        2)
+            BLOCK_PROPOSAL_FEE=30
+            ;;
+        3)
+            BLOCK_PROPOSAL_FEE=80
+            ;;
+        4)
+            BLOCK_PROPOSAL_FEE=300
+            ;;
+        *)
+            echo "无效的选项"
+            return
+            ;;
+    esac
+
+    sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=$BLOCK_PROPOSAL_FEE|" .env
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+    docker compose --profile l2_execution_engine up -d
+    docker compose --profile proposer up -d
+}
+
 
 # 主菜单
 function main_menu() {
