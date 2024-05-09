@@ -483,7 +483,7 @@ function set_fee(){
             return
             ;;
     esac
-
+    cd $HOME/simple-taiko-node
     sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=$BLOCK_PROPOSAL_FEE|" .env
     docker compose --profile l2_execution_engine down
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
