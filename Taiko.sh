@@ -496,9 +496,10 @@ function set_fee(){
 function main_menu() {
     
     clear
-    echo "=====================专用脚本 盗者必究==========================="
-    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Telegram :https://t.me/linzeusasa"
-    echo "需要测试网节点部署托管 技术指导 定制脚本 请联系Wechat :llkkxx001"
+     echo "========================自用脚本 盗者必究========================="
+    echo "需要测试网节点部署托管 技术指导 部署领水质押脚本 请联系Telegram :https://t.me/linzeusasa"
+    echo "需要测试网节点部署托管 技术指导 部署领水质押脚本 请联系Wechat :llkkxx001"
+    echo "===================Taiko最新测试网节点一键部署====================
     echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
     echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
     echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
