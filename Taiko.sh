@@ -204,7 +204,7 @@ sed -i "s|PORT_L2_EXECUTION_ENGINE_P2P=.*|PORT_L2_EXECUTION_ENGINE_P2P=${port_l2
 sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
-sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://148.113.17.127:9876,http://hekla.prover.taiko.coinblitz.pro:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://51.195.62.197:9876,http://taiko.web3crypt.net:9876,http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://148.113.9.122:9876,http://146.59.55.26:9876,http://taiko-a7-prover.zkpool.io,http://198.244.201.79:9876|' .env
+sed -i 's|PROVER_ENDPOINTS=.*|http://198.244.201.79:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-a7-prover.zkpool.io,http://146.59.55.26:9876,http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://51.91.70.42:9876,http://taiko.web3crypt.net:9876,http://148.113.17.127:9876,http://hekla.prover.taiko.coinblitz.pro:9876,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://51.161.118.103:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://49.13.210.192:9876,http://159.69.242.22:9876,http://49.13.69.238:9876,http://taiko.guru:9876,http://taiko.donkamote.xyz:9876|' .env
 sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
 
 # 定义NEW_BOOT_NODES变量并初始化为空字符串
@@ -300,7 +300,30 @@ function change_rpc() {
   cd $HOME
   cd simple-taiko-node
 
-  rpc_list=("http://148.113.17.127:9876""http://hekla.prover.taiko.coinblitz.pro:9876""https://prover-hekla.taiko.tools""https://prover2-hekla.taiko.tools""http://taiko-testnet.m51nodes.xyz:9876""http://148.113.16.26:9876""http://162.19.98.173:9876""http://49.13.215.95:9876""http://49.13.143.184:9876""http://51.195.62.197:9876""http://taiko.web3crypt.net:9876""http://kenz-prover.hekla.kzvn.xyz:9876""http://hekla.stonemac65.xyz:9876""http://148.113.9.122:9876""http://146.59.55.26:9876""http://taiko-a7-prover.zkpool.io""http://198.244.201.79:9876")
+  rpc_list = [
+    "http://198.244.201.79:9876",
+    "https://prover-hekla.taiko.tools",
+    "https://prover2-hekla.taiko.tools",
+    "http://taiko-a7-prover.zkpool.io",
+    "http://146.59.55.26:9876",
+    "http://kenz-prover.hekla.kzvn.xyz:9876",
+    "http://hekla.stonemac65.xyz:9876",
+    "http://51.91.70.42:9876",
+    "http://taiko.web3crypt.net:9876",
+    "http://148.113.17.127:9876",
+    "http://hekla.prover.taiko.coinblitz.pro:9876",
+    "http://taiko-testnet.m51nodes.xyz:9876",
+    "http://148.113.16.26:9876",
+    "http://51.161.118.103:9876",
+    "http://162.19.98.173:9876",
+    "http://49.13.215.95:9876",
+    "http://49.13.143.184:9876",
+    "http://49.13.210.192:9876",
+    "http://159.69.242.22:9876",
+    "http://49.13.69.238:9876",
+    "http://taiko.guru:9876",
+    "http://taiko.donkamote.xyz:9876"
+]
 
   rpc_string=""
 
