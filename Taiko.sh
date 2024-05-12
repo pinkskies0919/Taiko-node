@@ -81,7 +81,8 @@ function change_parameters_info() {
         echo "3. 更换Beacon rpc"
         echo "4. 加速区块同步节点"
         echo "5. 设置gasfee"
-        echo "6. 返回主菜单"
+        echo "6. 移除prover和TX_GAS_LIMIT"
+        echo "7. 返回主菜单"
         read -p "请输入选项（1-6）: " OPTION
 
         case $OPTION in
@@ -90,12 +91,22 @@ function change_parameters_info() {
             3) change_beaconrpc ;;
             4) add_bootnode ;;
             5) set_fee ;;
-            6) main_menu ;;
+            6) remove ;;
+            7) main_menu ;;
             *) echo "无效选项。" ;;
         esac
 }
 
+function remove() {
+    cd $HOME/simple-taiko-node
+    sed -i 's|PROVER_ENDPOINTS=.*|http://taiko-a7-prover.zkpool.io|' .env
+    sed -i 's|TX_GAS_LIMIT=.*|TX_GAS_LIMIT=|' .env
+    read -p "按回车键返回主菜单"
 
+    # 返回主菜单
+    main_menu
+    
+}
 
 function delete() {
         clear
@@ -487,6 +498,11 @@ function set_fee(){
     echo "2. 30(默认)"
     echo "3. 80"
     echo "4. 300"
+    echo "5. 500"
+    echo "6. 800"
+    echo "7. 1000"
+    echo "8. 2000"
+    echo "9. 3000"
     read -p "请输入选项编号：" option
 
     case $option in
@@ -502,11 +518,27 @@ function set_fee(){
         4)
             BLOCK_PROPOSAL_FEE=300
             ;;
+        5)
+            BLOCK_PROPOSAL_FEE=500
+            ;;
+        6)
+            BLOCK_PROPOSAL_FEE=800
+            ;;
+        7)
+            BLOCK_PROPOSAL_FEE=1000
+            ;;
+        8)
+            BLOCK_PROPOSAL_FEE=2000
+            ;;
+        9)
+            BLOCK_PROPOSAL_FEE=3000
+            ;;
         *)
             echo "无效的选项"
             return
             ;;
     esac
+    
     cd $HOME/simple-taiko-node
     sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=$BLOCK_PROPOSAL_FEE|" .env
     docker compose --profile l2_execution_engine down
