@@ -99,12 +99,15 @@ function change_parameters_info() {
 
 function remove() {
     cd $HOME/simple-taiko-node
-    sed -i 's|PROVER_ENDPOINTS=.*|http://taiko-a7-prover.zkpool.io|' .env
+    sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://taiko-a7-prover.zkpool.io|' .env
     sed -i 's|TX_GAS_LIMIT=.*|TX_GAS_LIMIT=|' .env
-    read -p "按回车键返回主菜单"
 
-    # 返回主菜单
-    main_menu
+    echo "参数更新成功"
+
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+    docker compose --profile l2_execution_engine up -d
+    docker compose --profile proposer up -d
     
 }
 
