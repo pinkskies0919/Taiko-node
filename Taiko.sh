@@ -82,8 +82,9 @@ function change_parameters_info() {
         echo "4. 加速区块同步节点"
         echo "5. 设置gasfee"
         echo "6. 移除prover和TX_GAS_LIMIT"
-        echo "7. 返回主菜单"
-        read -p "请输入选项（1-6）: " OPTION
+        echo "7. 仅移除TX_GAS_LIMIT"
+        echo "8. 返回主菜单"
+        read -p "请输入选项（1-8）: " OPTION
 
         case $OPTION in
             1) change_rpc ;;
@@ -92,7 +93,8 @@ function change_parameters_info() {
             4) add_bootnode ;;
             5) set_fee ;;
             6) remove ;;
-            7) main_menu ;;
+            7) remove1 ;;
+            8) main_menu ;;
             *) echo "无效选项。" ;;
         esac
 }
@@ -102,6 +104,18 @@ function remove() {
     sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://taiko-a7-prover.zkpool.io|' .env
     sed -i 's|TX_GAS_LIMIT=.*|TX_GAS_LIMIT=|' .env
 
+    echo "参数更新成功"
+
+    docker compose --profile l2_execution_engine down
+    docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+    docker compose --profile l2_execution_engine up -d
+    docker compose --profile proposer up -d
+    
+}
+
+function remove1() {
+    cd $HOME/simple-taiko-node
+    sed -i 's|TX_GAS_LIMIT=.*|TX_GAS_LIMIT=|' .env
     echo "参数更新成功"
 
     docker compose --profile l2_execution_engine down
@@ -304,12 +318,6 @@ echo "请保存以下链接，5分钟后进行访问：$updated_url"
 }
 
 # 查看节点日志
-function check_service_status() {
-    cd #HOME
-    cd simple-taiko-node
-    docker compose logs -f --tail 20
-}
-
 function change_rpc() {
   cd $HOME
   cd simple-taiko-node
@@ -339,11 +347,18 @@ function change_rpc() {
     "http://taiko.donkamote.xyz:9876"
   )
 
-
   rpc_string=""
 
   existing_rpc=$(grep -oE 'PROVER_ENDPOINTS=([^"]+)' .env | cut -d '=' -f 2)
   rpc_already_exist=0
+
+  echo "当前的 PROVER_ENDPOINTS: $existing_rpc"
+  read -p "是否确认更新？(输入 y 进行更新，输入其他结束): " confirm
+
+  if [ "$confirm" != "y" ]; then
+    echo "取消更新"
+    return
+  fi
 
   for rpc in "${rpc_list[@]}"
   do
@@ -364,6 +379,7 @@ function change_rpc() {
     docker compose up taiko_client_proposer -d
   fi
 }
+
 
 
 
