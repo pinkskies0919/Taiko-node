@@ -202,7 +202,7 @@ read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
 read -p "请输入EVM钱包私钥(去0x): " l1_proposer_private_key
 read -p "请输入EVM钱包地址: " l2_suggested_fee_recipient
-l1_beacon_http="http://unstable.holesky.beacon-api.nimbus.team"
+l1_beacon_http="http://95.217.74.216:5052"
 enable_proposer="true"
 disable_p2p_sync="false"
 
