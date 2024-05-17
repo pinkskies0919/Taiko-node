@@ -202,7 +202,7 @@ read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
 read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
 read -p "请输入EVM钱包私钥(去0x): " l1_proposer_private_key
 read -p "请输入EVM钱包地址: " l2_suggested_fee_recipient
-l1_beacon_http="http://95.217.74.216:5052"
+l1_beacon_http="http://95.216.229.50:5052"
 enable_proposer="true"
 disable_p2p_sync="false"
 
@@ -424,15 +424,19 @@ echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 function change_beaconrpc() {
 cd $HOME/simple-taiko-node
 
+
 while true; do
     echo "当前的Beacon Holskey RPC链接为: $(grep L1_BEACON_HTTP .env | cut -d '=' -f2)"
     echo "请选择操作:"
-    echo "1. 设置Beacon Holskey RPC链接为 http://unstable.holesky.beacon-api.nimbus.team"
-    echo "2. 设置Beacon Holskey RPC链接为 http://195.201.170.121:5052"
-    echo "3. 设置Beacon Holskey RPC链接为 http://188.40.51.249:5052"
-    echo "4. 设置Beacon Holskey RPC链接为 http://95.217.74.216:5052"
-    echo "5. 设置Beacon Holskey RPC链接为 http://138.201.221.84:5052"
-    echo "6. 设置自定义Beacon Holskey RPC链接"
+    echo "1. 设置Beacon Holskey RPC链接为 http://195.201.170.121:5052"
+    echo "2. 设置Beacon Holskey RPC链接为 http://188.40.51.249:5052"
+    echo "3. 设置Beacon Holskey RPC链接为 http://95.217.74.216:5052"
+    echo "4. 设置Beacon Holskey RPC链接为 http://138.201.221.84:5052"
+    echo "5. 设置Beacon Holskey RPC链接为 http://195.201.9.8:5052 (推荐)"
+    echo "6. 设置Beacon Holskey RPC链接为 http://95.217.58.227:5052 (推荐)"
+    echo "7. 设置Beacon Holskey RPC链接为 http://95.216.229.50:5052 (推荐)"
+    echo "8. 设置Beacon Holskey RPC链接为 http://95.216.28.36:5052 (推荐)"
+    echo "9. 设置自定义Beacon Holskey RPC链接"
     read -p "请输入选项: " choice
 
     case $choice in
@@ -453,6 +457,22 @@ while true; do
             break
             ;;
         5)
+            l1_beacon_http='http://195.201.9.8:5052'
+            break
+            ;;
+        6)
+            l1_beacon_http='http://95.217.58.227:5052'
+            break
+            ;;
+        7)
+            l1_beacon_http='http://95.216.229.50:5052'
+            break
+            ;;
+        8)
+            l1_beacon_http='http://95.216.28.36:5052'
+            break
+            ;;
+        9)
             read -p "请输入自定义Beacon Holskey RPC链接: " l1_beacon_http
             break
             ;;
@@ -462,7 +482,10 @@ while true; do
     esac
 done
 
+# 更新 .env 文件中的 L1_BEACON_HTTP 值
 sed -i "s|L1_BEACON_HTTP=.*|L1_BEACON_HTTP=${l1_beacon_http}|" .env
+echo "Beacon Holskey RPC链接已更新为: $l1_beacon_http"
+
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
 docker compose --profile l2_execution_engine up -d
@@ -514,10 +537,10 @@ function set_fee(){
     echo "3. 80"
     echo "4. 300"
     echo "5. 500"
-    echo "6. 800"
-    echo "7. 1000"
-    echo "8. 2000"
-    echo "9. 3000"
+    echo "6. 1000"
+    echo "7. 5000"
+    echo "8. 9999"
+    echo "9. 99999"
     read -p "请输入选项编号：" option
 
     case $option in
@@ -537,10 +560,10 @@ function set_fee(){
             BLOCK_PROPOSAL_FEE=500
             ;;
         6)
-            BLOCK_PROPOSAL_FEE=800
+            BLOCK_PROPOSAL_FEE=1000
             ;;
         7)
-            BLOCK_PROPOSAL_FEE=3000
+            BLOCK_PROPOSAL_FEE=5000
             ;;
         8)
             BLOCK_PROPOSAL_FEE=9999
