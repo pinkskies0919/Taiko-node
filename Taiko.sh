@@ -437,26 +437,22 @@ while true; do
 
     case $choice in
         1)
-            l1_beacon_http='http://unstable.holesky.beacon-api.nimbus.team'
-            break
-            ;;
-        2)
             l1_beacon_http='http://195.201.170.121:5052'
             break
             ;;
-        3)
+        2)
             l1_beacon_http='http://188.40.51.249:5052'
             break
             ;;
-        4)
+        3)
             l1_beacon_http='http://95.217.74.216:5052'
             break
             ;;
-        5)
+        4)
             l1_beacon_http='http://138.201.221.84:5052'
             break
             ;;
-        6)
+        5)
             read -p "请输入自定义Beacon Holskey RPC链接: " l1_beacon_http
             break
             ;;
