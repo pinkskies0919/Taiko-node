@@ -544,13 +544,13 @@ function set_fee(){
             BLOCK_PROPOSAL_FEE=800
             ;;
         7)
-            BLOCK_PROPOSAL_FEE=1000
+            BLOCK_PROPOSAL_FEE=3000
             ;;
         8)
-            BLOCK_PROPOSAL_FEE=2000
+            BLOCK_PROPOSAL_FEE=9999
             ;;
         9)
-            BLOCK_PROPOSAL_FEE=3000
+            BLOCK_PROPOSAL_FEE=99999
             ;;
         *)
             echo "无效的选项"
