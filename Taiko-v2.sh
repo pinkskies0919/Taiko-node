@@ -227,22 +227,23 @@ docker compose up taiko_client_proposer -d
 
 function repair(){
 
-# 指定要修改的文件路径
-env_file="/root/simple-taiko-node/.env"
+    # 指定要修改的文件路径
+    env_file="/root/simple-taiko-node/.env"
 
-# 指定要查询和替换的原始 RPC 地址和目标地址
-original_rpc="http://taiko-a7-prover.zkpool.io"
-new_rpc="PROVER_ENDPOINTS=http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://taiko.web3crypt.net:9876/,http://198.244.201.79:9876,http://taiko-a7-prover.zkpool.io,http://148.113.17.127:9876,http://146.59.55.26:9876,http://hekla.prover.taiko.coinblitz.pro:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://51.91.70.42:9876,http://51.161.118.103:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://49.13.210.192:9876,http://159.69.242.22:9876,http://49.13.69.238:9876,http://taiko.guru:9876,http://taiko.donkamote.xyz:9876"
+    # 指定要查询和替换的原始 RPC 地址和目标地址
+    original_rpc="http://taiko-a7-prover.zkpool.io"
+    new_rpc="PROVER_ENDPOINTS=http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://taiko.web3crypt.net:9876/,http://198.244.201.79:9876,http://taiko-a7-prover.zkpool.io,http://148.113.17.127:9876,http://146.59.55.26:9876,http://hekla.prover.taiko.coinblitz.pro:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://51.91.70.42:9876,http://51.161.118.103:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://49.13.210.192:9876,http://159.69.242.22:9876,http://49.13.69.238:9876,http://taiko.guru:9876,http://taiko.donkamote.xyz:9876"
 
-# 查询并替换 RPC 地址
-sed -i "s/$original_rpc/$new_rpc/g" $env_file
+    # 查询并替换 RPC 地址
+    sed -i "/$original_rpc/c $new_rpc" $env_file
 
-echo "修改完成"
+    echo "修改完成"
 
-# 输出新的 PROVER_ENDPOINTS 值
-prover_endpoints=$(grep "PROVER_ENDPOINTS" $env_file | cut -d '=' -f 2)
-echo "修改后的 PROVER_ENDPOINTS 值为: $prover_endpoints"
+    # 输出新的 PROVER_ENDPOINTS 值
+    prover_endpoints=$(grep "PROVER_ENDPOINTS" $env_file | cut -d '=' -f 2)
+    echo "修改后的 PROVER_ENDPOINTS 值为: $prover_endpoints"
 }
+
 
 # 主菜单
 function main_menu() {
