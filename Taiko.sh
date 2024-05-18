@@ -196,13 +196,13 @@ if [ ! -f .env ]; then
   cp .env.sample .env
 fi
 
-# 提示用户输入环境变量的值
-echo "回车默认"
-read -p "请输入BlockPI holesky HTTP链接: " l1_endpoint_http
-read -p "请输入BlockPI holesky WS链接: " l1_endpoint_ws
-read -p "请输入EVM钱包私钥(去0x): " l1_proposer_private_key
-read -p "请输入EVM钱包地址: " l2_suggested_fee_recipient
-l1_beacon_http="http://95.216.229.50:5052"
+# 从/root/record.txt文件中读取参数值
+record_file="/root/record.txt"
+l1_endpoint_http=$(grep "L1_ENDPOINT_HTTP=" "$record_file" | cut -d '=' -f 2)
+l1_endpoint_ws=$(grep "L1_ENDPOINT_WS=" "$record_file" | cut -d '=' -f 2)
+l1_proposer_private_key=$(grep "L1_PROPOSER_PRIVATE_KEY=" "$record_file" | cut -d '=' -f 2)
+l2_suggested_fee_recipient=$(grep "L2_SUGGESTED_FEE_RECIPIENT=" "$record_file" | cut -d '=' -f 2)
+l1_beacon_http="http://95.217.74.216:5052"
 enable_proposer="true"
 disable_p2p_sync="false"
 
@@ -223,6 +223,7 @@ sed -i "s|ENABLE_PROPOSER=.*|ENABLE_PROPOSER=${enable_proposer}|" .env
 sed -i "s|L1_PROPOSER_PRIVATE_KEY=.*|L1_PROPOSER_PRIVATE_KEY=${l1_proposer_private_key}|" .env
 sed -i "s|L2_SUGGESTED_FEE_RECIPIENT=.*|L2_SUGGESTED_FEE_RECIPIENT=${l2_suggested_fee_recipient}|" .env
 sed -i "s|DISABLE_P2P_SYNC=.*|DISABLE_P2P_SYNC=${disable_p2p_sync}|" .env
+sed -i 's|TX_GAS_LIMIT=.*|TX_GAS_LIMIT=|' .env
 
 # 更新.env文件中的端口配置
 sed -i "s|PORT_L2_EXECUTION_ENGINE_HTTP=.*|PORT_L2_EXECUTION_ENGINE_HTTP=${port_l2_execution_engine_http}|" .env
@@ -233,7 +234,7 @@ sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
 sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://198.244.201.79:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-a7-prover.zkpool.io,http://146.59.55.26:9876,http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://51.91.70.42:9876,http://taiko.web3crypt.net:9876,http://148.113.17.127:9876,http://hekla.prover.taiko.coinblitz.pro:9876,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://51.161.118.103:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://49.13.210.192:9876,http://159.69.242.22:9876,http://49.13.69.238:9876,http://taiko.guru:9876,http://taiko.donkamote.xyz:9876|' .env
-sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=30|" .env
+sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=99999|" .env
 
 # 定义NEW_BOOT_NODES变量并初始化为空字符串
     NEW_BOOT_NODES="enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303"
