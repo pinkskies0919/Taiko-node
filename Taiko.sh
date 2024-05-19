@@ -12,6 +12,7 @@ SCRIPT_PATH="$HOME/Taiko.sh"
 
 
 function p2p() {
+    cd $HOME/simple-taiko-node
     # 读取当前参数值
     current_tcp=$(grep -oP '\$\{PORT_L2_EXECUTION_ENGINE_P2P\}:\$\{PORT_L2_EXECUTION_ENGINE_P2P\}' docker-compose.yml)
     current_udp=$(grep -oP '\$\{PORT_L2_EXECUTION_ENGINE_P2P\}:\$\{PORT_L2_EXECUTION_ENGINE_P2P\}\/udp' docker-compose.yml)
@@ -773,7 +774,6 @@ function main_menu() {
     echo "从未安装过Taiko的vps请执行安装节点--查看节点日志"
     echo "安装过旧版本或者需要重装节点的vps请执行卸载旧版本--安装节点--查看节点日志"
     echo "请定期检查BlockPI rpc流量，不足时请执行更换BlockPI rpc"
-    echo "发现高度同步长时间追不上 请执行切换BlockPI rpc尝试 优先第4条rpc"
     echo "请选择要执行的操作:"
     echo "1. 卸载节点"
     echo "2. 安装节点"
