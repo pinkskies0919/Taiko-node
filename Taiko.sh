@@ -14,8 +14,8 @@ SCRIPT_PATH="$HOME/Taiko.sh"
 function p2p() {
     cd $HOME/simple-taiko-node
     # 读取当前参数值
-    current_tcp=$(grep -o '\${PORT_L2_EXECUTION_ENGINE_P2P}:\${PORT_L2_EXECUTION_ENGINE_P2P}' docker-compose.yml)
-    current_udp=$(grep -o '\${PORT_L2_EXECUTION_ENGINE_P2P}:\${PORT_L2_EXECUTION_ENGINE_P2P}/udp' docker-compose.yml)
+    current_tcp=$(grep -o '\${PORT_L2_EXECUTION_ENGINE_P2P}:30303' docker-compose.yml | head -n 1)
+    current_udp=$(grep -o '\${PORT_L2_EXECUTION_ENGINE_P2P}:30303/udp' docker-compose.yml | head -n 1)
 
     echo "当前TCP参数值: $current_tcp"
     echo "当前UDP参数值: $current_udp"
