@@ -10,6 +10,34 @@ fi
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Taiko.sh"
 
+
+function p2p() {
+    # 读取当前参数值
+    current_tcp=$(grep -oP '\$\{PORT_L2_EXECUTION_ENGINE_P2P\}:\$\{PORT_L2_EXECUTION_ENGINE_P2P\}' docker-compose.yml)
+    current_udp=$(grep -oP '\$\{PORT_L2_EXECUTION_ENGINE_P2P\}:\$\{PORT_L2_EXECUTION_ENGINE_P2P\}\/udp' docker-compose.yml)
+
+    echo "当前TCP参数值: $current_tcp"
+    echo "当前UDP参数值: $current_udp"
+
+    # 询问是否更新
+    echo "是否要更新参数值？"
+    echo "1: 更新"
+    echo "其他: 退出"
+    read -p "请选择: " option
+
+    if [ "$option" == "1" ]; then
+        sed -i 's/${PORT_L2_EXECUTION_ENGINE_P2P}:${PORT_L2_EXECUTION_ENGINE_P2P}/${PORT_L2_EXECUTION_ENGINE_P2P}:30303/g' docker-compose.yml
+        sed -i 's/${PORT_L2_EXECUTION_ENGINE_P2P}:${PORT_L2_EXECUTION_ENGINE_P2P}\/udp/${PORT_L2_EXECUTION_ENGINE_P2P}:30303\/udp/g' docker-compose.yml
+
+        docker compose --profile l2_execution_engine down
+        docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
+        docker compose --profile proposer up -d
+        echo "参数值已更新并重新启动相关服务。"
+    else
+        echo "退出，不进行更新。"
+    fi
+}
+
 # 查询信息
 function query_info() {
         clear
@@ -67,7 +95,7 @@ function query_wallet_address() {
     else
         echo "无法找到钱包地址。"
     fi
-    read -p "按回车键返回主菜单" 
+    read -p "按回车键返回主菜单"
     main_menu
 }
 
@@ -81,8 +109,8 @@ function change_parameters_info() {
         echo "3. 更换Beacon rpc"
         echo "4. 加速区块同步节点"
         echo "5. 设置gasfee"
-        echo "6. 移除prover和TX_GAS_LIMIT"
-        echo "7. 仅移除TX_GAS_LIMIT"
+        echo "6. 仅移除TX_GAS_LIMIT"
+        echo "7. 新增p2p参数"
         echo "8. 返回主菜单"
         read -p "请输入选项（1-8）: " OPTION
 
@@ -92,8 +120,8 @@ function change_parameters_info() {
             3) change_beaconrpc ;;
             4) add_bootnode ;;
             5) set_fee ;;
-            6) remove ;;
-            7) remove1 ;;
+            6) remove1 ;;
+            7) p2p ;;
             8) main_menu ;;
             *) echo "无效选项。" ;;
         esac
@@ -110,7 +138,7 @@ function remove() {
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
     docker compose --profile l2_execution_engine up -d
     docker compose --profile proposer up -d
-    
+
 }
 
 function remove1() {
@@ -122,7 +150,7 @@ function remove1() {
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
     docker compose --profile l2_execution_engine up -d
     docker compose --profile proposer up -d
-    
+
 }
 
 function delete() {
@@ -147,7 +175,7 @@ function uninstall_regular() {
     echo "正在卸载，请稍等······"
     cd simple-taiko-node
     docker compose --profile l2_execution_engine down
-    docker stop simple-taiko-node-taiko_client_proposer-1 
+    docker stop simple-taiko-node-taiko_client_proposer-1
     cd ..
     rm -rf simple-taiko-node
     read -p "按回车键返回"
@@ -233,8 +261,9 @@ sed -i "s|PORT_PROVER_SERVER=.*|PORT_PROVER_SERVER=${port_prover_server}|" .env
 sed -i "s|PORT_PROMETHEUS=.*|PORT_PROMETHEUS=${port_prometheus}|" .env
 sed -i "s|PORT_GRAFANA=.*|PORT_GRAFANA=${port_grafana}|" .env
 sed -i 's|PROVER_ENDPOINTS=.*|PROVER_ENDPOINTS=http://198.244.201.79:9876,https://prover-hekla.taiko.tools,https://prover2-hekla.taiko.tools,http://taiko-a7-prover.zkpool.io,http://146.59.55.26:9876,http://kenz-prover.hekla.kzvn.xyz:9876,http://hekla.stonemac65.xyz:9876,http://51.91.70.42:9876,http://taiko.web3crypt.net:9876,http://148.113.17.127:9876,http://hekla.prover.taiko.coinblitz.pro:9876,http://taiko-testnet.m51nodes.xyz:9876,http://148.113.16.26:9876,http://51.161.118.103:9876,http://162.19.98.173:9876,http://49.13.215.95:9876,http://49.13.143.184:9876,http://49.13.210.192:9876,http://159.69.242.22:9876,http://49.13.69.238:9876,http://taiko.guru:9876,http://taiko.donkamote.xyz:9876|' .env
-sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=99999|" .env
-
+sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=9999|" .env
+sed -i 's/${PORT_L2_EXECUTION_ENGINE_P2P}:${PORT_L2_EXECUTION_ENGINE_P2P}/${PORT_L2_EXECUTION_ENGINE_P2P}:30303/g' docker-compose.yml
+sed -i 's/${PORT_L2_EXECUTION_ENGINE_P2P}:${PORT_L2_EXECUTION_ENGINE_P2P}\/udp/${PORT_L2_EXECUTION_ENGINE_P2P}:30303\/udp/g' docker-compose.yml
 # 定义NEW_BOOT_NODES变量并初始化为空字符串
     NEW_BOOT_NODES="enode://0b310c7dcfcf45ef32dde60fec274af88d52c7f0fb6a7e038b14f5f7bb7d72f3ab96a59328270532a871db988a0bcf57aa9258fa8a80e8e553a7bb5abd77c40d@167.235.249.45:30303,enode://500a10f3a8cfe00689eb9d41331605bf5e746625ac356c24235ff66145c2de454d869563a71efb3d2fb4bc1c1053b84d0ab6deb0a4155e7227188e1a8457b152@85.10.202.253:30303"
 
@@ -298,11 +327,7 @@ sudo docker run hello-world
 # 运行 Taiko 节点
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
-
-
-# 运行 Taiko proposer 节点
-docker compose up taiko_client_proposer -d
+docker compose --profile proposer up -d
 # 获取公网 IP 地址
 public_ip=$(curl -s ifconfig.me)
 
@@ -449,7 +474,8 @@ sudo docker run hello-world
 # 运行 Taiko 节点
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
+
+docker compose --profile proposer up -d
 
 
 # 运行 Taiko proposer 节点
@@ -526,8 +552,8 @@ function change_rpc() {
     echo "成功更新prover rpc"
     docker compose --profile l2_execution_engine down
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-    docker compose --profile l2_execution_engine up -d
-    docker compose up taiko_client_proposer -d
+
+    docker compose --profile proposer up -d
   fi
 }
 
@@ -546,8 +572,8 @@ cd simple-taiko-node
 
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
-docker compose up taiko_client_proposer -d
+
+docker compose --profile proposer up -d
 }
 
 function change_blockpi() {
@@ -566,8 +592,8 @@ sed -i "s|L1_ENDPOINT_WS=.*|L1_ENDPOINT_WS=${l1_endpoint_ws}|" .env
 
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
-docker compose up taiko_client_proposer -d
+
+docker compose --profile proposer up -d
 
 echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
@@ -639,8 +665,8 @@ echo "Beacon Holskey RPC链接已更新为: $l1_beacon_http"
 
 docker compose --profile l2_execution_engine down
 docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-docker compose --profile l2_execution_engine up -d
-docker compose up taiko_client_proposer -d
+
+docker compose --profile proposer up -d
 
 echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
 }
@@ -670,14 +696,14 @@ function add_bootnode() {
     NEW_BOOT_NODES="${CURRENT_BOOT_NODES},${NEW_BOOT_NODES}"
     sed -i "s|^BOOT_NODES=.*|BOOT_NODES=${NEW_BOOT_NODES}|" .env
     echo "已成功添加指定的enode到BOOT_NODES参数中"
-    
+
     docker compose --profile l2_execution_engine down
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-    docker compose --profile l2_execution_engine up -d
-    docker compose up taiko_client_proposer -d
+
+    docker compose --profile proposer up -d
 
     echo "⠿ Network simple-taiko-node_default  Error报错可忽略"
-    
+
   fi
 }
 
@@ -727,19 +753,19 @@ function set_fee(){
             return
             ;;
     esac
-    
+
     cd $HOME/simple-taiko-node
     sed -i "s|BLOCK_PROPOSAL_FEE=.*|BLOCK_PROPOSAL_FEE=$BLOCK_PROPOSAL_FEE|" .env
     docker compose --profile l2_execution_engine down
     docker stop simple-taiko-node-taiko_client_proposer-1 && docker rm simple-taiko-node-taiko_client_proposer-1
-    docker compose --profile l2_execution_engine up -d
+
     docker compose --profile proposer up -d
 }
 
 
 # 主菜单
 function main_menu() {
-    
+
     clear
     echo "============================自用脚本============================="
     echo "需要测试网节点部署托管 技术指导 部署领水质押脚本 请联系Telegram :https://t.me/linzeusasa"
@@ -755,7 +781,7 @@ function main_menu() {
     echo "4. 查询信息"
     echo "5. 重启Taiko节点"
     echo "6. 免输安装节点(请先执行查询信息中的记录参数功能)"
-    read -p "请输入选项（1-5）: " OPTION
+    read -p "请输入选项（1-6）: " OPTION
 
     case $OPTION in
         1) delete ;;
